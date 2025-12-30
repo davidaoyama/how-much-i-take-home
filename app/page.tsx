@@ -32,6 +32,17 @@ export default function Home() {
   const handleCityChange = (index: number, cityId: string) => {
     setCityColumns(prev => {
       const newCols = [...prev];
+
+      // If salary is entered and we're selecting a city, auto-calculate
+      if (cityId && salary > 0) {
+        const city = CITIES.find(c => c.id === cityId);
+        if (city) {
+          const taxData = calculateTakeHomePay(salary, filingStatus, city.stateCode);
+          newCols[index] = { ...newCols[index], cityId, taxData };
+          return newCols;
+        }
+      }
+
       newCols[index] = { ...newCols[index], cityId, taxData: null };
       return newCols;
     });
@@ -62,10 +73,10 @@ export default function Home() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-5xl font-bold text-gray-900 mb-3">
-            Salary Calculator
+            how much i take home
           </h1>
           <p className="text-lg text-gray-600">
-            Compare take-home pay across US cities
+            see how much you really make
           </p>
         </div>
 
@@ -108,10 +119,10 @@ export default function Home() {
 
         <footer className="mt-16 text-center space-y-2">
           <p className="text-sm text-gray-600">
-            Based on 2025 federal and state tax brackets. For estimation purposes only.
+            based on 2025 federal and state tax brackets, for estimation purposes only
           </p>
           <p className="text-xs text-gray-500">
-            Not financial or tax advice. Consult a professional for accurate calculations.
+            not real financial advice, just wanted to see if i'd be rich lol
           </p>
         </footer>
       </div>
