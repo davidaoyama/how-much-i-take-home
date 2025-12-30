@@ -69,13 +69,13 @@ export default function Home() {
   const canCalculate = salary > 0 && cityColumns.some(c => c.cityId);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-6 sm:py-8 md:py-12 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold text-gray-900 mb-3">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-2 sm:mb-3">
             how much i take home
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             see how much you really make
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {cityColumns.map((col, index) => (
             <CityColumn
               key={index}
@@ -117,12 +117,12 @@ export default function Home() {
           )}
         </div>
 
-        <footer className="mt-16 text-center space-y-2">
-          <p className="text-sm text-gray-600">
+        <footer className="mt-12 sm:mt-16 text-center space-y-2 px-4">
+          <p className="text-xs sm:text-sm text-gray-600">
             based on 2025 federal and state tax brackets, for estimation purposes only
           </p>
           <p className="text-xs text-gray-500">
-            not real financial advice, just wanted to see if i'd be rich lol
+            not real financial advice, just wanted to see if i'd be rich lol - david
           </p>
         </footer>
       </div>

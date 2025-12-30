@@ -44,7 +44,7 @@ export default function CityColumn({
       <select
         value={cityData.cityId}
         onChange={(e) => onCityChange(e.target.value)}
-        className="w-80 pl-3 pr-8 py-3 border-2 border-gray-200 rounded-lg mb-6 font-semibold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none bg-white"
+        className="w-full sm:w-80 pl-3 pr-8 py-3 border-2 border-gray-200 rounded-lg mb-6 font-semibold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none bg-white"
       >
         <option value="">Select a city...</option>
         {CITIES.map((city) => (

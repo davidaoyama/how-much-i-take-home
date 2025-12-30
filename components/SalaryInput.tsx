@@ -16,20 +16,20 @@ export default function SalaryInput({
   onFilingStatusChange,
 }: SalaryInputProps) {
   return (
-    <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-      <div className="flex flex-col md:flex-row gap-6 items-end">
+    <div className="bg-white rounded-xl p-3 sm:p-6 md:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-6 md:items-end">
         {/* Salary Input */}
         <div className="flex-1">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Annual Salary
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-3.5 text-gray-500 text-lg">$</span>
+            <span className="absolute left-4 top-3.5 text-base sm:text-lg text-gray-500">$</span>
             <input
               type="number"
               value={salary || ''}
               onChange={(e) => onSalaryChange(Number(e.target.value))}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg text-lg text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg text-base sm:text-lg text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
               placeholder="100000"
               min="0"
               step="1000"
@@ -45,7 +45,7 @@ export default function SalaryInput({
           <select
             value={filingStatus}
             onChange={(e) => onFilingStatusChange(e.target.value as FilingStatus)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-lg text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none bg-white"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base sm:text-lg text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none bg-white"
           >
             {Object.entries(FILING_STATUS_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
