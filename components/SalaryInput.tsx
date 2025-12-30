@@ -16,20 +16,20 @@ export default function SalaryInput({
   onFilingStatusChange,
 }: SalaryInputProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <div className="flex flex-col md:flex-row gap-4 items-end">
+    <div className="neu-raised rounded-3xl p-8 border-2 border-[#2D3748]">
+      <div className="flex flex-col md:flex-row gap-6 items-end">
         {/* Salary Input */}
         <div className="flex-1">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-[#2D3748] mb-3">
             Annual Salary
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-3.5 text-gray-500 text-lg">$</span>
+            <span className="absolute left-4 top-3.5 text-[#718096] text-lg font-medium">$</span>
             <input
               type="number"
               value={salary || ''}
               onChange={(e) => onSalaryChange(Number(e.target.value))}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
+              className="w-full pl-10 pr-4 py-3 neu-input rounded-xl text-lg text-[#2D3748] font-medium border-2 border-transparent"
               placeholder="100000"
               min="0"
               step="1000"
@@ -39,13 +39,13 @@ export default function SalaryInput({
 
         {/* Filing Status */}
         <div className="flex-1">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-[#2D3748] mb-3">
             Filing Status
           </label>
           <select
             value={filingStatus}
             onChange={(e) => onFilingStatusChange(e.target.value as FilingStatus)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
+            className="w-full px-4 py-3 neu-input rounded-xl text-lg text-[#2D3748] font-medium border-2 border-transparent"
           >
             {Object.entries(FILING_STATUS_LABELS).map(([value, label]) => (
               <option key={value} value={value}>

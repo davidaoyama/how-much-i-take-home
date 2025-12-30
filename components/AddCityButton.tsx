@@ -7,11 +7,11 @@ export default function AddCityButton({ onClick, disabled = false }: AddCityButt
     <button
       onClick={onClick}
       disabled={disabled}
-      className="bg-white rounded-lg shadow-md p-6 border-2 border-dashed border-gray-300 hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 flex flex-col items-center justify-center min-h-[400px]"
+      className="neu-inset rounded-3xl p-6 neu-raised-hover transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center min-h-[400px] border-2 border-[#2D3748]"
       aria-label="Add another city to compare"
     >
       <svg
-        className="w-12 h-12 text-gray-400 mb-2"
+        className="w-12 h-12 text-[#718096] mb-3 group-hover:text-[#4A90E2] transition-colors"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -24,9 +24,9 @@ export default function AddCityButton({ onClick, disabled = false }: AddCityButt
           d="M12 4v16m8-8H4"
         />
       </svg>
-      <span className="text-gray-500 font-medium">Add City to Compare</span>
+      <span className="text-[#718096] font-semibold">Add City to Compare</span>
       {disabled && (
-        <span className="text-xs text-gray-400 mt-2">Maximum 3 cities</span>
+        <span className="text-xs text-[#718096] mt-2 opacity-70">Maximum 3 cities</span>
       )}
     </button>
   );

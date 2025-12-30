@@ -58,19 +58,19 @@ export default function Home() {
   const canCalculate = salary > 0 && cityColumns.some(c => c.cityId);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+    <main className="min-h-screen bg-[#e0e5ec] py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-[#2D3748] mb-2 tracking-tight">
             how much i take home?
           </h1>
-          <p className="text-gray-600">
+          <p className="text-[#718096] font-medium">
             see how much you really make 👀
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 items-end mb-8">
-          <div className="flex-1">
+        <div className="flex flex-col md:flex-row gap-4 items-center mb-8">
+          <div className="flex-1 w-full">
             <SalaryInput
               salary={salary}
               filingStatus={filingStatus}
@@ -78,11 +78,11 @@ export default function Home() {
               onFilingStatusChange={setFilingStatus}
             />
           </div>
-          <div className="md:w-48">
+          <div className="md:w-48 w-full">
             <button
               onClick={handleCalculate}
               disabled={!canCalculate}
-              className="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md text-lg h-[60px]"
+              className="w-full neu-button font-bold py-3 px-6 rounded-3xl text-lg h-[60px] text-[#4A90E2] border-2 border-[#2D3748]"
             >
               Calculate
             </button>
@@ -106,7 +106,7 @@ export default function Home() {
           )}
         </div>
 
-        <footer className="mt-12 text-center text-sm text-gray-600">
+        <footer className="mt-12 text-center text-sm text-[#718096]">
           <p>Based on 2025 federal and state tax brackets. Estimates only. Will update in 2026...</p>
         </footer>
       </div>
