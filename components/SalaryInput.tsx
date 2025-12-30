@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FilingStatus, FILING_STATUS_LABELS } from '@/lib/types';
+import { useTheme } from '@/lib/themeContext';
 
 interface SalaryInputProps {
   salary: number;
@@ -18,6 +19,7 @@ export default function SalaryInput({
   onFilingStatusChange,
   on401kChange,
 }: SalaryInputProps) {
+  const { colors } = useTheme();
   const [show401k, setShow401k] = useState(false);
   const [contribution401kPercent, setContribution401kPercent] = useState(0);
   const [matchType, setMatchType] = useState<'none' | '50_6' | '100_3' | '100_4' | '100_5' | 'custom'>('none');
@@ -129,7 +131,7 @@ export default function SalaryInput({
         <button
           onClick={() => setShow401k(!show401k)}
           type="button"
-          className="flex items-center text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+          className={`flex items-center ${colors.accent} hover:opacity-80 font-semibold transition-colors`}
         >
           <span className="mr-2">{show401k ? '−' : '+'}</span>
           401(k) Retirement Contributions (Optional)
@@ -241,7 +243,7 @@ export default function SalaryInput({
                 className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                   is401kActive
                     ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
+                    : `${colors.primary} ${colors.primaryHover} text-white disabled:bg-gray-300 disabled:cursor-not-allowed`
                 }`}
               >
                 {is401kActive ? 'Remove Contribution' : 'Add Contribution'}

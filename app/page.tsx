@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { FilingStatus, CityData } from '@/lib/types';
 import { CITIES } from '@/lib/cities';
 import { calculateTakeHomePay } from '@/lib/taxCalculations';
+import { useTheme } from '@/lib/themeContext';
 import SalaryInput from '@/components/SalaryInput';
 import CityColumn from '@/components/CityColumn';
 import AddCityButton from '@/components/AddCityButton';
+import ThemePicker from '@/components/ThemePicker';
 
 export default function Home() {
+  const { colors } = useTheme();
   const [salary, setSalary] = useState<number>(0);
   const [filingStatus, setFilingStatus] = useState<FilingStatus>('single');
   const [retirement401k, setRetirement401k] = useState<{
@@ -79,7 +82,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-6 sm:py-8 md:py-12 px-3 sm:px-4">
+    <main className={`min-h-screen bg-gradient-to-br ${colors.background} py-6 sm:py-8 md:py-12 px-3 sm:px-4 relative`}>
+      <ThemePicker />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 sm:mb-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-2 sm:mb-3">
