@@ -1,8 +1,16 @@
 'use client';
 
-import { CityColumnProps } from '@/lib/types';
-import { CITIES, getCityById } from '@/lib/cities';
-import { formatCurrency, getMonthlyTakeHome, calculateAfterRent, formatPercentage } from '@/lib/utils';
+import { CityData } from '@/lib/types';
+import { CITIES } from '@/lib/cities';
+import { formatCurrency } from '@/lib/utils';
+
+interface CityColumnProps {
+  cityData: CityData;
+  onCityChange: (cityId: string) => void;
+  onRentToggle: () => void;
+  onRemove: () => void;
+  canRemove: boolean;
+}
 
 export default function CityColumn({
   cityData,
@@ -11,175 +19,120 @@ export default function CityColumn({
   onRemove,
   canRemove,
 }: CityColumnProps) {
-  const selectedCity = getCityById(cityData.cityId);
-  const monthlyTakeHome = cityData.taxData ? getMonthlyTakeHome(cityData.taxData) : 0;
-  const afterRent = selectedCity ? calculateAfterRent(monthlyTakeHome, selectedCity.avgRent) : 0;
+  const selectedCity = CITIES.find((c) => c.id === cityData.cityId);
+  const afterRentMonthly = cityData.taxData && selectedCity
+    ? cityData.taxData.monthlyNetIncome - selectedCity.avgRent
+    : 0;
+  const afterRentAnnual = afterRentMonthly * 12;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 relative">
+    <div className="bg-white rounded-xl shadow-lg p-6 relative">
       {/* Remove Button */}
       {canRemove && (
         <button
           onClick={onRemove}
-          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"
           aria-label="Remove city"
         >
-          ✕
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       )}
 
       {/* City Selector */}
-      <div className="mb-6">
-        <label htmlFor={`city-${cityData.cityId}`} className="block text-sm font-medium text-gray-700 mb-2">
-          Select City
-        </label>
-        <select
-          id={`city-${cityData.cityId}`}
-          value={cityData.cityId}
-          onChange={(e) => onCityChange(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={cityData.loading}
-          aria-label="Select a city to compare"
-        >
-          <option value="">Select a city...</option>
-          {CITIES.map((city) => (
-            <option key={city.id} value={city.id}>
-              {city.name}, {city.stateCode}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Loading State */}
-      {cityData.loading && (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-2"></div>
-          <p className="text-gray-500">Calculating...</p>
-        </div>
-      )}
-
-      {/* Error State */}
-      {cityData.error && !cityData.loading && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-          <p className="text-red-600 font-medium">Error</p>
-          <p className="text-red-500 text-sm mt-1">{cityData.error}</p>
-        </div>
-      )}
+      <select
+        value={cityData.cityId}
+        onChange={(e) => onCityChange(e.target.value)}
+        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none mb-6 font-medium"
+      >
+        <option value="">Select a city...</option>
+        {CITIES.map((city) => (
+          <option key={city.id} value={city.id}>
+            {city.name}, {city.state}
+          </option>
+        ))}
+      </select>
 
       {/* Tax Breakdown */}
-      {cityData.taxData && !cityData.loading && !cityData.error && (
+      {cityData.taxData ? (
         <>
-          <div className="space-y-4 mb-6">
-            {/* Federal Tax */}
-            <div className="flex justify-between items-center">
+          <div className="space-y-3 mb-6">
+            <div className="flex justify-between text-sm">
               <span className="text-gray-600">Federal Tax</span>
-              <div className="text-right">
-                <div className="font-medium">
-                  {formatCurrency(cityData.taxData.federal_taxes_owed)}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {formatPercentage(cityData.taxData.federal_effective_rate)}
-                </div>
-              </div>
+              <span className="font-semibold">{formatCurrency(cityData.taxData.federalTax)}</span>
             </div>
-
-            {/* State Tax */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between text-sm">
               <span className="text-gray-600">State Tax</span>
-              <div className="text-right">
-                <div className="font-medium">
-                  {formatCurrency(cityData.taxData.region_taxes_owed)}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {formatPercentage(cityData.taxData.region_effective_rate)}
-                </div>
-              </div>
+              <span className="font-semibold">{formatCurrency(cityData.taxData.stateTax)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Social Security</span>
+              <span className="font-semibold">{formatCurrency(cityData.taxData.socialSecurityTax)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Medicare</span>
+              <span className="font-semibold">{formatCurrency(cityData.taxData.medicareTax)}</span>
             </div>
 
-            {/* FICA */}
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">FICA</span>
-              <div className="text-right">
-                <div className="font-medium">
-                  {formatCurrency(cityData.taxData.fica_total)}
-                </div>
-                <div className="text-xs text-gray-500">
-                  SS + Medicare
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-gray-200 pt-4">
-              {/* Net Take-Home */}
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-700 font-semibold">Net Take-Home</span>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-green-600">
-                    {formatCurrency(cityData.taxData.income_after_tax)}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {formatCurrency(monthlyTakeHome)} / month
-                  </div>
-                </div>
-              </div>
-
-              {/* Effective Tax Rate */}
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Effective Tax Rate</span>
-                <span className="text-gray-700 font-medium">
-                  {formatPercentage(cityData.taxData.total_effective_tax_rate)}
+            <div className="border-t-2 pt-3 mt-4">
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="font-semibold text-gray-900">Net Take-Home</span>
+                <span className="text-2xl font-bold text-green-600">
+                  {formatCurrency(cityData.taxData.netIncome)}
                 </span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Effective Rate: {(cityData.taxData.effectiveTaxRate * 100).toFixed(1)}%</span>
+                <span>{formatCurrency(cityData.taxData.monthlyNetIncome)} / month</span>
               </div>
             </div>
           </div>
 
           {/* Rent Toggle */}
-          <div className="border-t border-gray-200 pt-4">
-            <label className="flex items-center cursor-pointer">
+          <div className="border-t-2 pt-4">
+            <label className="flex items-center cursor-pointer group">
               <input
                 type="checkbox"
                 checked={cityData.includeRent}
                 onChange={onRentToggle}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">
-                Include rent
+              <span className="ml-3 text-sm font-semibold text-gray-700 group-hover:text-blue-600">
+                Include average rent
               </span>
             </label>
 
-            {/* After Rent Calculation */}
             {cityData.includeRent && selectedCity && (
-              <div className="mt-4 bg-blue-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Avg. Rent (1BR)</span>
-                  <span className="font-medium text-gray-700">
+              <div className="mt-4 bg-blue-50 rounded-lg p-4">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-700">Avg. Rent (1BR)</span>
+                  <span className="font-semibold text-gray-900">
                     {formatCurrency(selectedCity.avgRent)} / month
                   </span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-blue-100">
-                  <span className="text-gray-700 font-semibold">After Rent</span>
-                  <div className="text-right">
-                    <div className={`text-lg font-bold ${afterRent > 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                      {formatCurrency(afterRent)} / month
-                    </div>
-                    {afterRent < 0 && (
-                      <div className="text-xs text-red-500">
-                        Rent exceeds take-home
-                      </div>
-                    )}
+                <div className="border-t border-blue-200 pt-2 mt-2">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-semibold text-gray-900">After Rent</span>
+                    <span className={`text-2xl font-bold ${afterRentAnnual >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                      {formatCurrency(afterRentAnnual)}
+                    </span>
+                  </div>
+                  <div className="flex justify-end text-sm text-gray-500">
+                    <span>{formatCurrency(afterRentMonthly)} / month</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
         </>
-      )}
-
-      {/* Empty State */}
-      {!cityData.cityId && !cityData.loading && (
+      ) : (
         <div className="text-center py-12 text-gray-400">
-          <p>Select a city to see tax breakdown</p>
+          <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p className="text-sm">Select a city to see breakdown</p>
         </div>
       )}
     </div>

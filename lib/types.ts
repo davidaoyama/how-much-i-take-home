@@ -36,58 +36,34 @@ export interface City {
  * Represents one column in the UI
  */
 export interface CityData {
-  cityId: string;              // Selected city ID (empty string if not selected)
-  taxData: TaxCalculation | null;  // Calculation results (null if not calculated)
-  includeRent: boolean;        // Whether to show after-rent calculation
-  loading: boolean;            // Loading state during API call
-  error: string | null;        // Error message if calculation failed
+  cityId: string;                              // Selected city ID (empty string if not selected)
+  taxData: TaxCalculationResult | null;        // Calculation results (null if not calculated)
+  includeRent: boolean;                        // Whether to show after-rent calculation
 }
 
 // ============================================================================
-// Tax Calculation Types (API Response)
+// Tax Calculation Types (Local Calculation)
 // ============================================================================
 
 /**
- * Tax calculation result from API Ninjas
+ * Tax calculation result from local tax engine
  * Represents the complete tax breakdown for a given salary and location
  */
-export interface TaxCalculation {
-  country: string;                    // Always "United States"
-  region: string;                     // State name
-  income: number;                     // Annual gross income
-  taxable_income: number;             // Income after standard deduction
-  federal_effective_rate: number;     // Federal tax rate (decimal, e.g., 0.22 = 22%)
-  federal_taxes_owed: number;         // Annual federal taxes
-  fica_social_security: number;       // Annual Social Security tax
-  fica_medicare: number;              // Annual Medicare tax
-  fica_total: number;                 // Total FICA (Social Security + Medicare)
-  region_effective_rate: number;      // State tax rate (decimal)
-  region_taxes_owed: number;          // Annual state taxes
-  total_taxes_owed: number;           // Total annual taxes (federal + state + FICA)
-  income_after_tax: number;           // Annual take-home pay
-  total_effective_tax_rate: number;   // Overall tax rate (decimal)
+export interface TaxCalculationResult {
+  grossIncome: number;           // Annual gross income
+  federalTax: number;            // Annual federal taxes
+  stateTax: number;              // Annual state taxes
+  socialSecurityTax: number;     // Annual Social Security tax
+  medicareTax: number;           // Annual Medicare tax
+  ficaTotal: number;             // Total FICA (Social Security + Medicare)
+  totalTax: number;              // Total annual taxes (federal + state + FICA)
+  netIncome: number;             // Annual take-home pay
+  effectiveTaxRate: number;      // Overall tax rate (decimal)
+  monthlyNetIncome: number;      // Monthly take-home pay
 }
 
-// ============================================================================
-// API Request/Response Types
-// ============================================================================
-
-/**
- * Request payload for tax calculation API
- */
-export interface TaxCalculationRequest {
-  salary: number;
-  filingStatus: FilingStatus;
-  stateCode: string;
-}
-
-/**
- * Response from tax calculation API
- */
-export interface TaxCalculationResponse {
-  data?: TaxCalculation;
-  error?: string;
-}
+// Keep old type for backward compatibility (deprecated)
+export type TaxCalculation = TaxCalculationResult;
 
 // ============================================================================
 // Component Props Types

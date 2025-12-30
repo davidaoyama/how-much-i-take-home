@@ -1,44 +1,43 @@
 # Salary Take-Home Calculator - Implementation Plan
 
-## Updated Requirements
-- ✅ Manual "Calculate" button (not auto-trigger)
-- ✅ Rate limiting for API calls
-- ✅ Local storage caching for searched cities
+## 🔄 NEW APPROACH - Hardcoded Tax Data (No API)
+- ❌ ~~API Ninjas~~ - Free tier requires premium for state taxes
+- ✅ Hardcoded 2025 federal & state tax brackets
+- ✅ Manual "Calculate" button
+- ❌ ~~Rate limiting~~ - Not needed without API
+- ✅ Local storage caching for calculations
 
 ## Phase 2: Implementation Checklist
 
 ### Setup & Configuration
 - [x] 1. Verify Next.js project structure and dependencies
-- [x] 2. Set up environment variables (.env.local with API_NINJAS_KEY)
-- [x] 3. Configure TypeScript and Tailwind CSS
-- [x] 3a. Create rate limiting utility (`lib/rateLimit.ts`)
-- [x] 3b. Create local storage caching utility (`lib/cache.ts`)
+- [x] 2. Configure TypeScript and Tailwind CSS
+- [x] 3. Create local storage caching utility (`lib/cache.ts`)
 
 ### Core Library Files
 - [x] 4. Create `lib/types.ts` with all TypeScript interfaces
 - [x] 5. Create `lib/cities.ts` with hardcoded city data (25 cities)
-- [x] 6. Create `lib/utils.ts` with helper functions (formatCurrency, calculateAfterRent)
+- [x] 6. Create `lib/utils.ts` with helper functions
+- [ ] 7. **NEW:** Create `lib/taxData2025.ts` with 2025 tax brackets
+- [ ] 8. **NEW:** Create `lib/taxCalculator.ts` with calculation logic
 
-### API Layer
-- [ ] 7. Create `app/api/calculate-tax/route.ts` (Next.js API route)
-- [ ] 8. Test API route with sample request
+### UI Components
+- [x] 9. Create `components/SalaryInput.tsx`
+- [x] 10. Create `components/CityColumn.tsx`
+- [x] 11. Create `components/AddCityButton.tsx`
+- [ ] 12. **UPDATE:** Refactor `SalaryInput.tsx` to single line: Salary | Status | Calculate
 
-### UI Components (Dumb Components)
-- [ ] 9. Create `components/SalaryInput.tsx` (salary + filing status inputs)
-- [ ] 10. Create `components/CityColumn.tsx` (individual city comparison card)
-- [ ] 11. Create `components/AddCityButton.tsx` (add city button)
-
-### Main Page (Smart Container)
-- [ ] 12. Update `app/page.tsx` with state management
-- [ ] 13. Implement API call logic with AbortController (race condition handling)
-- [ ] 14. Implement add/remove city logic
-- [ ] 15. Wire up all components together
+### Main Page
+- [x] 13. Create `app/page.tsx` with state management
+- [ ] 14. **UPDATE:** Remove API call logic, use local tax calculator
+- [ ] 15. **UPDATE:** Remove rate limiting
+- [ ] 16. **UPDATE:** Update UI layout (single line inputs, columns below)
 
 ### Polish & Testing
-- [ ] 16. Add responsive design (mobile/tablet/desktop breakpoints)
-- [ ] 17. Test all edge cases (network errors, invalid input, etc.)
-- [ ] 18. Verify accessibility (semantic HTML, aria-labels)
-- [ ] 19. Final manual testing of complete user flow
+- [ ] 17. Test calculations with sample salaries
+- [ ] 18. Verify all 25 cities work correctly
+- [ ] 19. Test caching functionality
+- [ ] 20. Final UX polish
 
 ---
 
