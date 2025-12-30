@@ -3,6 +3,31 @@
 export type FilingStatus = 'single' | 'married' | 'married_separate' | 'head_of_household';
 
 // ============================================================================
+// 401(K) RETIREMENT CONTRIBUTION CONSTANTS 2025
+// ============================================================================
+
+const CONTRIBUTION_401K_LIMIT_2025 = 23500;
+const CONTRIBUTION_401K_CATCHUP_2025 = 7500; // Age 50+ (not implemented yet)
+
+// Employer match presets
+const MATCH_PRESETS: Record<string, { matchPercent: number; capPercent: number }> = {
+  '50_6': { matchPercent: 0.5, capPercent: 0.06 },
+  '100_3': { matchPercent: 1.0, capPercent: 0.03 },
+  '100_4': { matchPercent: 1.0, capPercent: 0.04 },
+  '100_5': { matchPercent: 1.0, capPercent: 0.05 },
+};
+
+export interface RetirementContribution {
+  employeePercent: number;
+  employeeAmount: number;
+  employerMatchType: 'none' | '50_6' | '100_3' | '100_4' | '100_5' | 'custom';
+  employerMatchPercent?: number;
+  employerMatchCap?: number;
+  employerMatchAmount: number;
+  totalContribution: number;
+}
+
+// ============================================================================
 // FEDERAL TAX BRACKETS 2025
 // ============================================================================
 
@@ -306,6 +331,55 @@ const MEDICARE_ADDITIONAL_THRESHOLD = {
 };
 
 // ============================================================================
+// 401(K) CALCULATION FUNCTIONS
+// ============================================================================
+
+/**
+ * Calculate 401(k) employee contribution and employer match
+ */
+function calculate401kContribution(
+  salary: number,
+  employeePercent: number,
+  matchType: string,
+  customMatchPercent?: number,
+  customMatchCap?: number
+): RetirementContribution {
+  // Employee contribution (capped at annual limit)
+  const employeeAmount = Math.min(
+    salary * (employeePercent / 100),
+    CONTRIBUTION_401K_LIMIT_2025
+  );
+
+  // Employer match calculation
+  let employerMatchAmount = 0;
+
+  if (matchType === 'none') {
+    employerMatchAmount = 0;
+  } else if (matchType === 'custom' && customMatchPercent !== undefined && customMatchCap !== undefined) {
+    const maxMatch = salary * (customMatchCap / 100);
+    employerMatchAmount = Math.min(
+      employeeAmount * (customMatchPercent / 100),
+      maxMatch
+    );
+  } else if (MATCH_PRESETS[matchType]) {
+    const preset = MATCH_PRESETS[matchType];
+    const maxMatch = salary * preset.capPercent;
+    const employeeContributionUpToCap = Math.min(employeeAmount, maxMatch);
+    employerMatchAmount = employeeContributionUpToCap * preset.matchPercent;
+  }
+
+  return {
+    employeePercent,
+    employeeAmount: Math.round(employeeAmount),
+    employerMatchType: matchType as 'none' | '50_6' | '100_3' | '100_4' | '100_5' | 'custom',
+    employerMatchPercent: customMatchPercent,
+    employerMatchCap: customMatchCap,
+    employerMatchAmount: Math.round(employerMatchAmount),
+    totalContribution: Math.round(employeeAmount + employerMatchAmount),
+  };
+}
+
+// ============================================================================
 // TAX CALCULATION FUNCTIONS
 // ============================================================================
 
@@ -374,6 +448,8 @@ function calculateFICA(income: number, filingStatus: FilingStatus): {
 
 export interface TaxCalculationResult {
   grossIncome: number;
+  contribution401k?: RetirementContribution;
+  taxableIncome: number;
   federalTax: number;
   stateTax: number;
   socialSecurityTax: number;
@@ -381,6 +457,7 @@ export interface TaxCalculationResult {
   ficaTotal: number;
   totalTax: number;
   netIncome: number;
+  netIncomeAfter401k: number;
   effectiveTaxRate: number;
   monthlyNetIncome: number;
 }
@@ -388,17 +465,46 @@ export interface TaxCalculationResult {
 export function calculateTakeHomePay(
   annualSalary: number,
   filingStatus: FilingStatus,
-  stateCode: string
+  stateCode: string,
+  retirement401k?: {
+    employeePercent: number;
+    matchType: string;
+    customMatchPercent?: number;
+    customMatchCap?: number;
+  }
 ): TaxCalculationResult {
-  const federalTax = calculateFederalTax(annualSalary, filingStatus);
-  const stateTax = calculateStateTax(annualSalary, stateCode);
-  const fica = calculateFICA(annualSalary, filingStatus);
+  // Calculate 401(k) if provided
+  let contribution401k: RetirementContribution | undefined;
+  let taxableIncome = annualSalary;
+
+  if (retirement401k && retirement401k.employeePercent > 0) {
+    contribution401k = calculate401kContribution(
+      annualSalary,
+      retirement401k.employeePercent,
+      retirement401k.matchType,
+      retirement401k.customMatchPercent,
+      retirement401k.customMatchCap
+    );
+
+    // Reduce taxable income by employee contribution (pre-tax)
+    taxableIncome = annualSalary - contribution401k.employeeAmount;
+  }
+
+  // Calculate taxes on reduced income
+  const federalTax = calculateFederalTax(taxableIncome, filingStatus);
+  const stateTax = calculateStateTax(taxableIncome, stateCode);
+  const fica = calculateFICA(annualSalary, filingStatus); // FICA on gross, not reduced
 
   const totalTax = federalTax + stateTax + fica.total;
   const netIncome = annualSalary - totalTax;
+  const netIncomeAfter401k = contribution401k
+    ? netIncome - contribution401k.employeeAmount
+    : netIncome;
 
   return {
     grossIncome: annualSalary,
+    contribution401k,
+    taxableIncome: Math.round(taxableIncome),
     federalTax: Math.round(federalTax),
     stateTax: Math.round(stateTax),
     socialSecurityTax: Math.round(fica.socialSecurity),
@@ -406,8 +512,9 @@ export function calculateTakeHomePay(
     ficaTotal: Math.round(fica.total),
     totalTax: Math.round(totalTax),
     netIncome: Math.round(netIncome),
+    netIncomeAfter401k: Math.round(netIncomeAfter401k),
     effectiveTaxRate: totalTax / annualSalary,
-    monthlyNetIncome: Math.round(netIncome / 12),
+    monthlyNetIncome: Math.round(netIncomeAfter401k / 12),
   };
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FilingStatus, CityData } from '@/lib/types';
 import { CITIES } from '@/lib/cities';
 import { calculateTakeHomePay } from '@/lib/taxCalculations';
@@ -11,11 +11,18 @@ import AddCityButton from '@/components/AddCityButton';
 export default function Home() {
   const [salary, setSalary] = useState<number>(0);
   const [filingStatus, setFilingStatus] = useState<FilingStatus>('single');
+  const [retirement401k, setRetirement401k] = useState<{
+    employeePercent: number;
+    matchType: string;
+    customMatchPercent?: number;
+    customMatchCap?: number;
+  } | undefined>(undefined);
   const [cityColumns, setCityColumns] = useState<CityData[]>([
     { cityId: '', taxData: null, includeRent: false }
   ]);
 
-  const handleCalculate = () => {
+  // Recalculate all cities when salary, filingStatus, or retirement401k changes
+  useEffect(() => {
     setCityColumns(prev =>
       prev.map(col => {
         if (!col.cityId) return col;
@@ -23,11 +30,16 @@ export default function Home() {
         const city = CITIES.find(c => c.id === col.cityId);
         if (!city) return col;
 
-        const taxData = calculateTakeHomePay(salary, filingStatus, city.stateCode);
+        // If salary is 0, clear tax data but keep the city selected
+        if (salary === 0) {
+          return { ...col, taxData: null };
+        }
+
+        const taxData = calculateTakeHomePay(salary, filingStatus, city.stateCode, retirement401k);
         return { ...col, taxData };
       })
     );
-  };
+  }, [salary, filingStatus, retirement401k]);
 
   const handleCityChange = (index: number, cityId: string) => {
     setCityColumns(prev => {
@@ -37,7 +49,7 @@ export default function Home() {
       if (cityId && salary > 0) {
         const city = CITIES.find(c => c.id === cityId);
         if (city) {
-          const taxData = calculateTakeHomePay(salary, filingStatus, city.stateCode);
+          const taxData = calculateTakeHomePay(salary, filingStatus, city.stateCode, retirement401k);
           newCols[index] = { ...newCols[index], cityId, taxData };
           return newCols;
         }
@@ -66,8 +78,6 @@ export default function Home() {
     }
   };
 
-  const canCalculate = salary > 0 && cityColumns.some(c => c.cityId);
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-6 sm:py-8 md:py-12 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
@@ -80,24 +90,14 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 items-center mb-8">
-          <div className="flex-1 w-full">
-            <SalaryInput
-              salary={salary}
-              filingStatus={filingStatus}
-              onSalaryChange={setSalary}
-              onFilingStatusChange={setFilingStatus}
-            />
-          </div>
-          <div className="md:w-48 w-full">
-            <button
-              onClick={handleCalculate}
-              disabled={!canCalculate}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold py-3.5 px-6 rounded-lg transition-colors h-[60px] text-lg shadow-sm disabled:cursor-not-allowed"
-            >
-              Calculate
-            </button>
-          </div>
+        <div className="mb-8">
+          <SalaryInput
+            salary={salary}
+            filingStatus={filingStatus}
+            onSalaryChange={setSalary}
+            onFilingStatusChange={setFilingStatus}
+            on401kChange={setRetirement401k}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

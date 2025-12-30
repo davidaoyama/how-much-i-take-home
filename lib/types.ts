@@ -42,6 +42,23 @@ export interface CityData {
 }
 
 // ============================================================================
+// Retirement Contribution Types
+// ============================================================================
+
+/**
+ * 401(k) retirement contribution details
+ */
+export interface RetirementContribution {
+  employeePercent: number;                              // Employee contribution percentage (0-100)
+  employeeAmount: number;                               // Actual employee contribution amount
+  employerMatchType: 'none' | '50_6' | '100_3' | '100_4' | '100_5' | 'custom'; // Match type
+  employerMatchPercent?: number;                        // Custom match percentage
+  employerMatchCap?: number;                            // Custom match cap percentage
+  employerMatchAmount: number;                          // Actual employer match amount
+  totalContribution: number;                            // Total 401(k) contribution
+}
+
+// ============================================================================
 // Tax Calculation Types (Local Calculation)
 // ============================================================================
 
@@ -51,15 +68,18 @@ export interface CityData {
  */
 export interface TaxCalculationResult {
   grossIncome: number;           // Annual gross income
+  contribution401k?: RetirementContribution; // 401(k) contributions (optional)
+  taxableIncome: number;         // Taxable income after 401(k) deduction
   federalTax: number;            // Annual federal taxes
   stateTax: number;              // Annual state taxes
   socialSecurityTax: number;     // Annual Social Security tax
   medicareTax: number;           // Annual Medicare tax
   ficaTotal: number;             // Total FICA (Social Security + Medicare)
   totalTax: number;              // Total annual taxes (federal + state + FICA)
-  netIncome: number;             // Annual take-home pay
+  netIncome: number;             // Annual take-home pay (after taxes, before 401k)
+  netIncomeAfter401k: number;    // True take-home after taxes and 401(k)
   effectiveTaxRate: number;      // Overall tax rate (decimal)
-  monthlyNetIncome: number;      // Monthly take-home pay
+  monthlyNetIncome: number;      // Monthly take-home pay (after 401k)
 }
 
 // Keep old type for backward compatibility (deprecated)

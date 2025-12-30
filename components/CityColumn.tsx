@@ -75,11 +75,45 @@ export default function CityColumn({
               <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(cityData.taxData.medicareTax)}</span>
             </div>
 
+            {/* 401(k) Retirement Savings Section */}
+            {cityData.taxData.contribution401k && (
+              <div className="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="text-sm font-semibold text-gray-700 mb-3">
+                  Retirement Savings
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Your contribution</span>
+                    <span className="font-semibold text-gray-900 tabular-nums">
+                      {formatCurrency(cityData.taxData.contribution401k.employeeAmount)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Employer match</span>
+                    <span className="font-semibold text-green-600 tabular-nums">
+                      {formatCurrency(cityData.taxData.contribution401k.employerMatchAmount)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t border-purple-200 pt-2 mt-2">
+                    <span className="font-semibold text-gray-900">Total saved</span>
+                    <span className="font-bold text-purple-600 tabular-nums">
+                      {formatCurrency(cityData.taxData.contribution401k.totalContribution)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {formatCurrency(Math.round(cityData.taxData.contribution401k.totalContribution / 12))} per month
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="mt-6 bg-green-50 border border-green-100 rounded-lg p-4">
               <div className="flex justify-between items-baseline mb-2">
-                <span className="font-bold text-gray-900">Net Take-Home</span>
+                <span className="font-bold text-gray-900">
+                  Net Take-Home{cityData.taxData.contribution401k && ' (after 401k)'}
+                </span>
                 <span className="text-3xl font-bold text-green-600 tabular-nums">
-                  {formatCurrency(cityData.taxData.netIncome)}
+                  {formatCurrency(cityData.taxData.netIncomeAfter401k)}
                 </span>
               </div>
               <div className="flex justify-between text-sm text-gray-600">
@@ -127,12 +161,20 @@ export default function CityColumn({
       ) : (
         <div className="text-center py-16">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            {selectedCity ? (
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ) : (
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            )}
           </div>
-          <p className="text-sm font-medium text-gray-500">Select a city to see tax breakdown</p>
+          <p className="text-sm font-medium text-gray-500">
+            {selectedCity ? 'Enter a salary to see tax breakdown' : 'Select a city to see tax breakdown'}
+          </p>
         </div>
       )}
     </div>
