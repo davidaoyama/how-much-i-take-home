@@ -25,7 +25,7 @@ export function formatCurrency(amount: number, showCents = false): string {
  * @returns Monthly take-home amount
  */
 export function getMonthlyTakeHome(taxData: TaxCalculation): number {
-  return taxData.income_after_tax / 12;
+  return taxData.netIncome / 12;
 }
 
 /**
