@@ -58,14 +58,14 @@ export default function Home() {
   const canCalculate = salary > 0 && cityColumns.some(c => c.cityId);
 
   return (
-    <main className="min-h-screen bg-[#e0e5ec] py-12 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-[#2D3748] mb-2 tracking-tight">
-            how much i take home?
+        <div className="text-center mb-10">
+          <h1 className="text-5xl font-bold text-gray-900 mb-3">
+            Salary Calculator
           </h1>
-          <p className="text-[#718096] font-medium">
-            see how much you really make 👀
+          <p className="text-lg text-gray-600">
+            Compare take-home pay across US cities
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export default function Home() {
             <button
               onClick={handleCalculate}
               disabled={!canCalculate}
-              className="w-full neu-button font-bold py-3 px-6 rounded-3xl text-lg h-[60px] text-[#4A90E2] border-2 border-[#2D3748]"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold py-3.5 px-6 rounded-lg transition-colors h-[60px] text-lg shadow-sm disabled:cursor-not-allowed"
             >
               Calculate
             </button>
@@ -106,8 +106,13 @@ export default function Home() {
           )}
         </div>
 
-        <footer className="mt-12 text-center text-sm text-[#718096]">
-          <p>Based on 2025 federal and state tax brackets. Estimates only. Will update in 2026...</p>
+        <footer className="mt-16 text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            Based on 2025 federal and state tax brackets. For estimation purposes only.
+          </p>
+          <p className="text-xs text-gray-500">
+            Not financial or tax advice. Consult a professional for accurate calculations.
+          </p>
         </footer>
       </div>
     </main>

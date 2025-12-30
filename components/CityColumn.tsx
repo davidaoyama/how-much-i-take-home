@@ -26,15 +26,15 @@ export default function CityColumn({
   const afterRentAnnual = afterRentMonthly * 12;
 
   return (
-    <div className="neu-raised rounded-3xl p-6 relative border-2 border-[#2D3748]">
+    <div className="bg-white rounded-xl p-6 relative shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
       {/* Remove Button */}
       {canRemove && (
         <button
           onClick={onRemove}
-          className="absolute top-3 right-3 w-7 h-7 rounded-full neu-button flex items-center justify-center text-[#718096] hover:text-[#E53E3E] transition-colors border border-[#2D3748]"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white hover:bg-red-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-600 transition-all shadow-sm"
           aria-label="Remove city"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -44,7 +44,7 @@ export default function CityColumn({
       <select
         value={cityData.cityId}
         onChange={(e) => onCityChange(e.target.value)}
-        className="w-full px-4 py-3 neu-input rounded-xl mb-6 font-semibold text-[#2D3748] border-2 border-transparent"
+        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg mb-6 font-semibold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none bg-white"
       >
         <option value="">Select a city...</option>
         {CITIES.map((city) => (
@@ -58,92 +58,81 @@ export default function CityColumn({
       {cityData.taxData ? (
         <>
           <div className="space-y-3 mb-6">
-            <div className="flex justify-between text-sm">
-              <span className="text-[#718096] font-medium">Federal Tax</span>
-              <span className="font-semibold text-[#2D3748]">{formatCurrency(cityData.taxData.federalTax)}</span>
+            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
+              <span className="text-gray-600 font-medium">Federal Tax</span>
+              <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(cityData.taxData.federalTax)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-[#718096] font-medium">State Tax</span>
-              <span className="font-semibold text-[#2D3748]">{formatCurrency(cityData.taxData.stateTax)}</span>
+            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
+              <span className="text-gray-600 font-medium">State Tax</span>
+              <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(cityData.taxData.stateTax)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-[#718096] font-medium">Social Security</span>
-              <span className="font-semibold text-[#2D3748]">{formatCurrency(cityData.taxData.socialSecurityTax)}</span>
+            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
+              <span className="text-gray-600 font-medium">Social Security</span>
+              <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(cityData.taxData.socialSecurityTax)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-[#718096] font-medium">Medicare</span>
-              <span className="font-semibold text-[#2D3748]">{formatCurrency(cityData.taxData.medicareTax)}</span>
+            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
+              <span className="text-gray-600 font-medium">Medicare</span>
+              <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(cityData.taxData.medicareTax)}</span>
             </div>
 
-            <div className="border-t border-[#cbd5e0] pt-4 mt-4">
-              <div className="neu-raised rounded-2xl p-4">
-                <div className="flex justify-between items-baseline mb-1">
-                  <span className="font-bold text-[#2D3748]">Net Take-Home</span>
-                  <span className="text-2xl font-bold text-[#48BB78]">
-                    {formatCurrency(cityData.taxData.netIncome)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm text-[#718096]">
-                  <span>Effective Rate: {(cityData.taxData.effectiveTaxRate * 100).toFixed(1)}%</span>
-                  <span>{formatCurrency(cityData.taxData.monthlyNetIncome)} / month</span>
-                </div>
+            <div className="mt-6 bg-green-50 border border-green-100 rounded-lg p-4">
+              <div className="flex justify-between items-baseline mb-2">
+                <span className="font-bold text-gray-900">Net Take-Home</span>
+                <span className="text-3xl font-bold text-green-600 tabular-nums">
+                  {formatCurrency(cityData.taxData.netIncome)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Effective Rate: {(cityData.taxData.effectiveTaxRate * 100).toFixed(1)}%</span>
+                <span className="tabular-nums">{formatCurrency(cityData.taxData.monthlyNetIncome)} / month</span>
               </div>
             </div>
           </div>
 
           {/* Rent Toggle */}
-          <div className="border-t border-[#cbd5e0] pt-4">
+          <div className="border-t border-gray-200 pt-4">
             <label className="flex items-center cursor-pointer group">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={cityData.includeRent}
-                  onChange={onRentToggle}
-                  className="sr-only peer"
-                />
-                <div className="w-5 h-5 rounded neu-inset peer-checked:neu-raised transition-all flex items-center justify-center">
-                  {cityData.includeRent && (
-                    <svg className="w-3 h-3 text-[#4A90E2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-              </div>
-              <span className="ml-3 text-sm font-semibold text-[#2D3748] group-hover:text-[#4A90E2] transition-colors">
+              <input
+                type="checkbox"
+                checked={cityData.includeRent}
+                onChange={onRentToggle}
+                className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              />
+              <span className="ml-3 text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
                 Include average rent
               </span>
             </label>
 
             {cityData.includeRent && selectedCity && (
-              <div className="mt-4 neu-inset rounded-2xl p-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-[#718096] font-medium">Avg. Rent (1BR)</span>
-                  <span className="font-semibold text-[#2D3748]">
+              <div className="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-4">
+                <div className="flex justify-between text-sm mb-3 pb-3 border-b border-blue-200">
+                  <span className="text-gray-700 font-medium">Avg. Rent (1BR)</span>
+                  <span className="font-semibold text-gray-900 tabular-nums">
                     {formatCurrency(selectedCity.avgRent)} / month
                   </span>
                 </div>
-                <div className="border-t border-[#cbd5e0] pt-2 mt-2">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-bold text-[#2D3748]">After Rent</span>
-                    <span className={`text-2xl font-bold ${afterRentAnnual >= 0 ? 'text-[#4A90E2]' : 'text-[#E53E3E]'}`}>
-                      {formatCurrency(afterRentAnnual)}
-                    </span>
-                  </div>
-                  <div className="flex justify-end text-sm text-[#718096]">
-                    <span>{formatCurrency(afterRentMonthly)} / month</span>
-                  </div>
+                <div className="flex justify-between items-baseline mb-1">
+                  <span className="font-bold text-gray-900">After Rent</span>
+                  <span className={`text-2xl font-bold tabular-nums ${afterRentAnnual >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                    {formatCurrency(afterRentAnnual)}
+                  </span>
+                </div>
+                <div className="flex justify-end text-sm text-gray-600">
+                  <span className="tabular-nums">{formatCurrency(afterRentMonthly)} / month</span>
                 </div>
               </div>
             )}
           </div>
         </>
       ) : (
-        <div className="text-center py-12 text-[#718096]">
-          <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <p className="text-sm font-medium">Select a city to see breakdown</p>
+        <div className="text-center py-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <p className="text-sm font-medium text-gray-500">Select a city to see tax breakdown</p>
         </div>
       )}
     </div>
